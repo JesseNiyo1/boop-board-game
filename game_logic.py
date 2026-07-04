@@ -47,13 +47,17 @@ class GameLogic:
         # Flip whose turn it is
         self.is_player_1_turn = not self.is_player_1_turn
         # Re-draw board
-        self.gameboard.update_board(self.board)
-        current_player = 1 if self.is_player_1_turn else 2
-        self.gameboard.update_status(current_player, self.players)
+        self.refresh_display()
 
         # Using this to debug
         print(f"Clicked {row}, {col}")
         print(self.players)
+
+    def refresh_display(self):
+        current_player = 1 if self.is_player_1_turn else 2
+
+        self.gameboard.update_board(self.board)
+        self.gameboard.update_status(current_player, self.players)
 
 
     def place_game_piece(self, row, col, piece):
