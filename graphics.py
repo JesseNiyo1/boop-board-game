@@ -55,6 +55,8 @@ class Gameboard:
 
         # Click event handler
         self.click_handler = click_handler
+        # Switch button event handler
+        self.switch_handler = None
         # Button-1 = Left Mouse click
         self.canvas.bind("<Button-1>", self.canvas_clicked)
 
@@ -68,6 +70,18 @@ class Gameboard:
         self.gray_kitten = tk.PhotoImage(file="./assets/gray_kitten.png").subsample(scale, scale)
         self.orange_cat = tk.PhotoImage(file="./assets/orange_cat.png").subsample(scale, scale)
         self.gray_cat = tk.PhotoImage(file="./assets/gray_cat.png").subsample(scale, scale)
+
+        # Button to switch between placing kittens and cats
+        self.switch_button = tk.Button(
+            self.info_frame,
+            text="Switch Game Piece",
+            command=self.on_switch_clicked
+        )
+        self.switch_button.pack(pady=5)
+
+    def on_switch_clicked(self):
+        if self.switch_handler:
+            self.switch_handler()
 
     def make_board(self):
         for row in range(self.DIMENSION):
@@ -120,8 +134,7 @@ class Gameboard:
                     self.canvas.create_image(x, y, image=self.gray_cat, anchor="nw")
 
     # Function to update current player pieces and whose turn it is
-    def update_status(self, current_player, players):
-
+    def update_status(self, current_player, players, placing_cats):
         self.turn_label.config(
             text=f"Player {current_player}'s Turn"
         )
@@ -135,6 +148,18 @@ class Gameboard:
             text=f"⬜ Player 2 - Kittens: {players[2]['kittens']} | Cats: {players[2]['cats']}",
             fg="gray" if current_player == 2 else "black"
         )
+
+        player_cats = players[current_player]["cats"]
+        if player_cats == 0:
+            self.switch_button.config(
+                text="No Cats Available",
+                state="disabled"
+            )
+        else:
+            self.switch_button.config(
+                state="normal",
+                text="Switch to Kitten" if placing_cats else "Switch to Cat"
+            )
 
     def canvas_clicked(self, event):
         print("Canvas clicked")

@@ -57,8 +57,16 @@ class GameLogic:
         current_player = 1 if self.is_player_1_turn else 2
 
         self.gameboard.update_board(self.board)
-        self.gameboard.update_status(current_player, self.players)
+        self.gameboard.update_status(current_player, self.players, self.placing_cats)
 
+    def toggle_piece(self):
+        current_player = 1 if self.is_player_1_turn else 2
+        if self.players[current_player]["cats"] == 0:
+            self.placing_cats = False
+        else:
+            self.placing_cats = not self.placing_cats
+
+        self.refresh_display()
 
     def place_game_piece(self, row, col, piece):
         player, piece_type = piece
