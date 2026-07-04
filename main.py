@@ -1,12 +1,15 @@
 import graphics
 import game_logic
-import numpy as np
 
-graphics = graphics.Gameboard(6, 100)
-logic = game_logic.GameLogic(graphics)
+board = graphics.Gameboard(tile_size=100)
+logic = game_logic.GameLogic(board)
 
-graphics.click_handler = logic.on_tile_click
-graphics.make_board()
+board.click_handler = logic.on_tile_click
+board.make_board()
 
+board.update_board(logic.board)
 
-graphics.game.mainloop()
+current_player = 1 if logic.is_player_1_turn else 2
+board.update_status(current_player, logic.players)
+
+board.game.mainloop()

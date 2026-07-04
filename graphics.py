@@ -7,7 +7,7 @@ PLAYER_2_CAT = 4
 ASSET_SIZE = 200
 
 class Gameboard:
-    def __init__(self, dimension, tile_size, click_handler = None):
+    def __init__(self, tile_size, dimension = 6, click_handler = None):
         """
         Initialize the game board
         :param dimension: Size of the board (Typically 6 x 6)
@@ -19,7 +19,38 @@ class Gameboard:
         # Typical tkinter setup bs don't mind this
         self.game = tk.Tk()
         self.game.title("boop.")
-        self.canvas = tk.Canvas(self.game, width=self.DIMENSION * self.TILE_SIZE, height=self.DIMENSION * self.TILE_SIZE)
+
+        # ----- Status Display -----
+        self.info_frame = tk.Frame(self.game)
+        self.info_frame.pack(fill="x", pady=5)
+
+        self.turn_label = tk.Label(
+            self.info_frame,
+            text="Player 1's Turn",
+            font=("Arial", 16, "bold")
+        )
+        self.turn_label.pack()
+
+        self.player1_label = tk.Label(
+            self.info_frame,
+            text="Player 1 - Kittens: 8 | Cats: 0",
+            font=("Arial", 12)
+        )
+        self.player1_label.pack(anchor="w")
+
+        self.player2_label = tk.Label(
+            self.info_frame,
+            text="Player 2 - Kittens: 8 | Cats: 0",
+            font=("Arial", 12)
+        )
+        self.player2_label.pack(anchor="w")
+
+        # ----- Game Board -----
+        self.canvas = tk.Canvas(
+            self.game,
+            width=self.DIMENSION * self.TILE_SIZE,
+            height=self.DIMENSION * self.TILE_SIZE
+        )
         self.canvas.pack()
 
         # Click event handler
@@ -87,6 +118,23 @@ class Gameboard:
 
                 elif player == 2 and piece_type == "cat":
                     self.canvas.create_image(x, y, image=self.gray_cat, anchor="nw")
+
+    # Function to update current player pieces and whose turn it is
+    def update_status(self, current_player, players):
+
+        self.turn_label.config(
+            text=f"Player {current_player}'s Turn"
+        )
+
+        self.player1_label.config(
+            text=f"🟧 Player 1 - Kittens: {players[1]['kittens']} | Cats: {players[1]['cats']}",
+            fg="orange" if current_player == 1 else "black"
+        )
+
+        self.player2_label.config(
+            text=f"⬜ Player 2 - Kittens: {players[2]['kittens']} | Cats: {players[2]['cats']}",
+            fg="gray" if current_player == 2 else "black"
+        )
 
     def canvas_clicked(self, event):
         print("Canvas clicked")

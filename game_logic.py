@@ -7,7 +7,6 @@ class GameLogic:
     def __init__(self, gameboard):
         self.board = np.full((6, 6), None, dtype=object)
         self.gameboard = gameboard
-
         self.players = {
             1: {"kittens": 8, "cats": 0},
             2: {"kittens": 8, "cats": 0},
@@ -27,24 +26,19 @@ class GameLogic:
         :param col: Tile's column
         :return:
         """
-        # Using this to debug
-        print(f"Clicked {row}, {col}")
-
         # Make sure tile is empty
         if self.board[row][col] is not None:
             return
 
-        # Determine whose turn it is
-        player = 1 if self.is_player_1_turn else 2
-
-
         # Use appropriate symbol representation for kittens/cats
-        piece = (player, "cat" if self.placing_cats else "kitten")
+        # When Player 1 turn, 2 - self.is_player_1_turn = 1. When Player 2 turn, 2 - self.is_player_1_turn = 0.
+        piece = (2 - self.is_player_1_turn, "cat" if self.placing_cats else "kitten")
 
         # Place game piece, apply boop logic, and update player resources accordingly
         self.place_game_piece(row, col, piece)
         self.board, removed_pieces = boop(self.board, row, col)
         self.update_resources(removed_pieces)
+
         # Check for matchings
         matched_pieces = update_matchings(self.board)
         self.match_detected(matched_pieces)
@@ -54,6 +48,8 @@ class GameLogic:
         self.is_player_1_turn = not self.is_player_1_turn
         # Re-draw board
         self.gameboard.update_board(self.board)
+        current_player = 1 if self.is_player_1_turn else 2
+        self.gameboard.update_status(current_player, self.players)
 
         # Using this to debug
         print(f"Clicked {row}, {col}")
